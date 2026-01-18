@@ -4,8 +4,6 @@ The Environmental Modeling Team is an interdisciplinary group of scientists and 
 
 Aquatic ecosystems and the communities that depend on them face increasing threats from hydrological and climate extremes, development pressures, harmful algal blooms, and water quality degradation. Our modeling approaches integrate physical, chemical, and biological processes across multiple spatial and temporal scales to help achieve the dynamic balance needed to protect and restore these systems.
 
-## Ecohydrology as a Foundation
-
 Our work is grounded in the principles of ecohydrology, an interdisciplinary science focused on understanding the interactions between hydrological and ecological processes. Ecohydrology seeks to improve the functioning, stability, and resiliency of degraded ecosystems and foster sustainable development through better understanding and management of water-ecosystem relationships.
 
 Zalewski et al. (1997) proposed three foundational hypotheses that guide ecohydrological thinking:
