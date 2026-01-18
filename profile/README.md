@@ -55,7 +55,7 @@ ClearWater is an environmental modeling system whose primary purpose is the inte
 
 ### ClearWater-Riverine
 
-ClearWater-Riverine provides two-dimensional water quality and ecohydrologic simulation capabilities that couple with HEC-RAS 2D models. ClearWater-Riverine reads hydrodynamic outputs from H&H models and computes advection-diffusion transport along with biogeochemical kinetics for simulating nutrient cycling, algal dynamics, dissolved oxygen, and other water quality constituents in riverine systems. Work is in progress to integrate ClearWater-Riverine with GSSHA via the Basic Model Interface (BMI).
+ClearWater-Riverine provides two-dimensional water quality and ecohydrologic simulation capabilities that couple with the model grid and hydraulics outputs computed by the two-dimensional (2D) [River Analysis System (HEC-RAS)](https://www.hec.usace.army.mil/software/hec-ras/) developed by the USACE [Hydrologic Engineering Center (HEC)](https://www.hec.usace.army.mil). ClearWater-Riverine reads hydrodynamic outputs from H&H models and computes advection-diffusion transport along with biogeochemical kinetics for simulating nutrient cycling, algal dynamics, dissolved oxygen, and other water quality constituents in riverine systems. Work is in progress to integrate ClearWater-Riverine with ERDC's [Gridded Surface Subsurface Hydrologic Analysis (GSSHA)](https://en.wikipedia.org/wiki/GSSHA) model via the [Basic Model Interface (BMI)](https://csdms.colorado.edu/wiki/BMI).
 
 ### NADI
 
