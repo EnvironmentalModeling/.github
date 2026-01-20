@@ -4,6 +4,8 @@ The Environmental Modeling Team is an interdisciplinary group of scientists and 
 
 Aquatic ecosystems and the communities that depend on them face increasing threats from hydrological and climate extremes, development pressures, harmful algal blooms, and water quality degradation. Our modeling approaches integrate physical, chemical, and biological processes across multiple spatial and temporal scales to help achieve the dynamic balance needed to protect and restore these systems.
 
+Environmental modeling encompasses process-based numerical simulation as well as data-driven statistical and machine learning (ML) approaches, hybrid methods such as physics-informed ML, and analysis tools for uncertainty quantification and sensitivity analysis. Our work develops and applies these computational methods, tools, and frameworks to support water resource management and environmental research.
+
 Our work is grounded in the principles of ecohydrology, an interdisciplinary science focused on understanding the interactions between hydrological and ecological processes. Ecohydrology seeks to improve the functioning, stability, and resiliency of degraded ecosystems and foster sustainable development through better understanding and management of water-ecosystem relationships.
 
 Zalewski et al. (1997) proposed three foundational hypotheses that guide ecohydrological thinking:
@@ -51,11 +53,30 @@ CE-QUAL-W2 is a two-dimensional (longitudinal-vertical) hydrodynamic and water q
 
 ### ClearWater
 
-ClearWater is an environmental modeling system whose primary purpose is the integration of water quality and ecohydrologic modeling with diverse hydraulic and hydrologic (H&H) models. ClearWater supports the simulation of biogeochemical and thermal processes and advection-diffusion calculations in riverine and reservoir systems as well as watershed runoff, leveraging existing H&H models for the hydrodynamic framework. ClearWater's modules simulate ecohydrological processes including heat balance (temperature), advanced biogeochemical kinetics, nutrient cycling, algal dynamics, dissolved oxygen, and contaminant fate and transport. Its transport engines compute advection and diffusion in complex riverine systems and stratified reservoirs.
+ClearWater (Corps Library for Environmental Analysis and Restoration of Watersheds) is an environmental modeling system whose primary purpose is the integration of water quality and ecohydrologic modeling with diverse hydraulic and hydrologic (H&H) models. ClearWater supports the simulation of biogeochemical and thermal processes and advection-diffusion calculations in riverine and reservoir systems as well as watershed runoff, leveraging existing H&H models for the hydrodynamic framework. ClearWater's modules simulate ecohydrological processes including heat balance (temperature), advanced biogeochemical kinetics, nutrient cycling, algal dynamics, dissolved oxygen, vegetation dynamics, and contaminant fate and transport. Its transport engines compute advection and diffusion in complex riverine systems and stratified reservoirs.
+
+The ClearWater system comprises the following process simulation modules:
+
+- **TSM (Temperature Simulation Module)**: Simulates heat balance processes including solar radiation, atmospheric exchange, and thermal stratification dynamics.
+- **NSM (Nutrient Simulation Modules)**: NSM-I simulates fundamental eutrophication processes including interactions among temperature, nutrients, algae, dissolved oxygen, and organic matter. NSM-II extends these capabilities with a two-layer sediment diagenesis model, labile and refractory organic matter pools, multiple algal groups including nitrogen-fixing cyanobacteria, silica cycling, and anaerobic processes (methane and sulfide dynamics).
+- **GSM (General Constituent Simulation Module)**: Simulates user-defined conservative and non-conservative constituents with customizable decay and transformation rates.
+- **CSM (Contaminant Simulation Module)**: Simulates fate and transport of organic chemicals, pesticides, and metals, including multi-phase partitioning (dissolved, DOC-sorbed, algae-sorbed, POM-sorbed, solid-sorbed), decay and biodegradation, hydrolysis, photolysis, volatilization, and bed sediment interactions.
+- **MSM (Mercury Simulation Module)**: Simulates mercury speciation (elemental Hg0, inorganic HgII, and methylmercury MeHg), methylation and demethylation, photoreduction, volatilization, partitioning, and bioaccumulation processes in aquatic systems with optional sediment diagenesis.
+- **ESM (Ecohydrology Simulation Module)**: A process-based 2D ecohydrology model that simulates vegetation dynamics in river corridors, floodplains, and aquatic ecosystems, including recruitment, growth, mortality (scour, burial, drowning, drying, ice, competition), and feedbacks between vegetation structure and hydraulic roughness. ESM supports six vegetation categories: trees, shrubs, grasses, emergent aquatic, submerged aquatic, and floating vegetation. ESM is currently loosely coupled with HEC-RAS 2D: hydraulics and sediment outputs from completed HEC-RAS simulations serve as inputs to ESM, which computes updated Manning's n roughness values based on evolving vegetation structure. However, these roughness values are not currently fed back into HEC-RAS during simulation. Within ClearWater-Riverine, ESM is tightly coupled with NSM (nutrients) and TSM (temperature), enabling bidirectional exchange of nutrient uptake, thermal effects, and vegetation state at each computational timestep.
+
+ClearWater modules are written in modern Python and designed to flexibly couple with a variety of H&H models including HEC-RAS 2D, GSSHA, CE-QUAL-W2, and [AdH](https://www.erdc.usace.army.mil/Locations/CHL/AdH/) via the [Basic Model Interface (BMI)](https://csdms.colorado.edu/wiki/BMI). The Python implementation modernizes algorithms originally developed in Fortran 95 and documented in ERDC technical reports by Zhang and Johnson (2016).
 
 ### ClearWater-Riverine
 
-ClearWater-Riverine provides two-dimensional water quality and ecohydrologic simulation capabilities that couple with the model grid and hydraulics outputs computed by the two-dimensional (2D) [River Analysis System (HEC-RAS)](https://www.hec.usace.army.mil/software/hec-ras/) developed by the USACE [Hydrologic Engineering Center (HEC)](https://www.hec.usace.army.mil). ClearWater-Riverine reads hydrodynamic outputs from H&H models and computes advection-diffusion transport along with biogeochemical kinetics for simulating nutrient cycling, algal dynamics, dissolved oxygen, and other water quality constituents in riverine systems. Work is in progress to integrate ClearWater-Riverine with ERDC's [Gridded Surface Subsurface Hydrologic Analysis (GSSHA)](https://en.wikipedia.org/wiki/GSSHA) model via the [Basic Model Interface (BMI)](https://csdms.colorado.edu/wiki/BMI).
+ClearWater-Riverine provides two-dimensional water quality and ecohydrologic simulation capabilities that couple with the model grid and hydraulics outputs computed by the two-dimensional (2D) [River Analysis System (HEC-RAS)](https://www.hec.usace.army.mil/software/hec-ras/) developed by the USACE [Hydrologic Engineering Center (HEC)](https://www.hec.usace.army.mil). ClearWater-Riverine is a 2D water quality transport model that calculates conservative advection and diffusion of constituents from an unstructured grid of flows within complex river systems and floodplains. It reads hydrodynamic outputs from H&H models and computes advection-diffusion transport along with biogeochemical kinetics by coupling to the ClearWater process simulation modules.
+
+ClearWater-Riverine assumes vertical homogeneity and is best suited for evaluating riverine systems during conditions where vertical stratification does not contribute significantly to water quality dynamics, but where longitudinal and lateral changes are important. At present, TSM and NSM have been successfully coupled to HEC-RAS 2D models via ClearWater-Riverine, enabling simulation of fundamental eutrophication processes such as the interactions among temperature, nutrients, algae, dissolved oxygen, and organic matter.
+
+Work is in progress to integrate ClearWater-Riverine with ERDC's [Gridded Surface Subsurface Hydrologic Analysis (GSSHA)](https://www.erdc.usace.army.mil/Locations/CHL/GSSHA/) model via the [Basic Model Interface (BMI)](https://csdms.colorado.edu/wiki/BMI), extending its applicability to watershed-scale simulations.
+
+### ClearWater-Data
+
+ClearWater-Data provides flexible and performant data access and storage protocols for the ClearWater system. It combines the capabilities of [xarray](https://xarray.dev) with flexible access patterns to facilitate data exchange among ClearWater components and with external H&H models.
 
 ### NADI
 
@@ -67,7 +88,7 @@ NADI's capabilities have been demonstrated through large-scale analysis of river
 
 [Environmental Pool Management (EPM)](https://www.mvs-wc.usace.army.mil/epm/epmindex.html) is an operational strategy that adjusts the magnitude, timing, frequency, and duration of reservoir pool levels to achieve ecological outcomes such as improved wetland habitat, enhanced water quality, and increased habitat value for waterbirds, reptiles, and other wildlife. The EPM Screening Tools apply spatial and hydrologic screening criteria to identify USACE reservoirs with high potential for EPM implementation.
 
-The spatial analysis component uses satellite imagery from Sentinel-2 and Landsat, processed via [Google Earth Engine](https://earthengine.google.com), in conjunction with the [Global Surface Water Dataset (GSWD)](https://global-surface-water.appspot.com), [National Land Cover Dataset (NLCD)](https://www.usgs.gov/centers/eros/science/national-land-cover-database), and [National Elevation Dataset (NED)](https://www.usgs.gov/publications/national-elevation-dataset) to identify and characterize reservoir sediment deltas suitable for habitat management. Water occurrence, seasonality, and inter-annual variability metrics are computed to assess the ecological viability of delta areas. Soil characteristics from the [U.S. Department of Agriculture's) (USDA)](https://www.usda.gov) [Soil Survey Geographic Database (SSURGO)](https://www.nrcs.usda.gov/resources/data-and-reports/soil-survey-geographic-database-ssurgo) support assessment of habitat suitability for target species.
+The spatial analysis component uses satellite imagery from Sentinel-2 and Landsat, processed via [Google Earth Engine](https://earthengine.google.com), in conjunction with the [Global Surface Water Dataset (GSWD)](https://global-surface-water.appspot.com), [National Land Cover Dataset (NLCD)](https://www.usgs.gov/centers/eros/science/national-land-cover-database), and [National Elevation Dataset (NED)](https://www.usgs.gov/publications/national-elevation-dataset) to identify and characterize reservoir sediment deltas suitable for habitat management. Water occurrence, seasonality, and inter-annual variability metrics are computed to assess the ecological viability of delta areas. Soil characteristics from the [U.S. Department of Agriculture (USDA)](https://www.usda.gov) [Soil Survey Geographic Database (SSURGO)](https://www.nrcs.usda.gov/resources/data-and-reports/soil-survey-geographic-database-ssurgo) support assessment of habitat suitability for target species.
 
 The hydrologic analysis component retrieves pool stage records from the USACE Access to Water (A2W) system and computes growing-season metrics including stage range, variability, and frequency of fluctuations. A hydrologic management opportunity framework links combinations of water level characteristics to distinct ecological management opportunities, classifying reservoirs by their suitability for persistent wetland vegetation, seasonal shorebird habitat, waterfowl foraging areas, or other ecological targets.
 
@@ -75,7 +96,67 @@ The tools support prioritization of reservoirs for EPM across ecoregions and cli
 
 ## References
 
-Zalewski, M., Janauer, G.A., and Jolánkai, G. (1997). Ecohydrology: A new paradigm for the sustainable use of aquatic resources. UNESCO IHP Technical Document in Hydrology No. 7.
+Baird, A.J. and Wilby, R.L. (Eds.). (1999). Eco-Hydrology: Plants and Water in Terrestrial and Aquatic Environments. Routledge, New York.
+
+Bowie, G.L., Mills, W.B., Porcella, D.B., Campbell, C.L., Pagenkopf, J.R., Rupp, G.L., Johnson, K.M., Chan, P.W.H., Gherini, S.A., and Chamberlin, C.E. (1985). Rates, Constants, and Kinetics Formulations in Surface Water Quality Modeling (2nd ed.). EPA/600/3-85/040. U.S. Environmental Protection Agency, Athens, GA.
+
+Brewer, S.K., Worthington, T.A., Mollenhauer, R., Stewart, D.R., McManamay, R.A., Guertault, L., and Moore, D. (2018). Synthesizing Models Useful for Ecohydrology and Ecohydraulic Approaches: An Emphasis on Integrating Models to Address Complex Research Questions. Ecohydrology, 11(7). https://doi.org/10.1002/eco.1966
+
+Chapra, S.C. (1997). Surface Water-Quality Modeling. McGraw-Hill, New York.
+
+Chapra, S.C. (2008). Surface Water-Quality Modeling. Waveland Press, Long Grove, IL.
+
+Di Toro, D.M. (2001). Sediment Flux Modeling. Wiley-Interscience, New York.
+
+Eagleson, P.S. (1978a). Climate, Soil, and Vegetation: 1. Introduction to Water Balance Dynamics. Water Resources Research, 14(5), 705–712. https://doi.org/10.1029/WR014i005p00705
+
+Eagleson, P.S. (1978b). Climate, Soil, and Vegetation: 2. The Distribution of Annual Precipitation Derived from Observed Storm Sequences. Water Resources Research, 14(5), 713–721. https://doi.org/10.1029/WR014i005p00713
+
+Eagleson, P.S. (1978c). Climate, Soil, and Vegetation: 3. A Simplified Model of Soil Moisture Movement in the Liquid Phase. Water Resources Research, 14(5), 722–730. https://doi.org/10.1029/WR014i005p00722
+
+Eagleson, P.S. (1978d). Climate, Soil, and Vegetation: 4. The Expected Value of Annual Evapotranspiration. Water Resources Research, 14(5), 731–739. https://doi.org/10.1029/WR014i005p00731
+
+Eagleson, P.S. (1978e). Climate, Soil, and Vegetation: 5. A Derived Distribution of Storm Surface Runoff. Water Resources Research, 14(5), 741–748. https://doi.org/10.1029/WR014i005p00741
+
+Eagleson, P.S. (1978f). Climate, Soil, and Vegetation: 6. Dynamics of the Annual Water Balance. Water Resources Research, 14(5), 749–764. https://doi.org/10.1029/WR014i005p00749
+
+Eagleson, P.S. (1978g). Climate, Soil, and Vegetation: 7. A Derived Distribution of Annual Water Yield. Water Resources Research, 14(5), 765–776. https://doi.org/10.1029/WR014i005p00765
+
+Eagleson, P.S. (1982). Ecological Optimality in Water-Limited Natural Soil-Vegetation Systems: 1. Theory and Hypothesis. Water Resources Research, 18(2), 325–340. https://doi.org/10.1029/WR018i002p00325
+
+Fu, B., Horsburgh, J.S., Jakeman, A.J., Gualtieri, C., Arnold, T., Marshall, L., Green, T.R., Quinn, N.W.T., Volk, M., Hunt, R.J., Vezzaro, L., Croke, B.F.W., Jakeman, J.D., Snow, V., and Rashleigh, B. (2020). Modeling Water Quality in Watersheds: From Here to the Next Generation. Water Resources Research, 56(11). https://doi.org/10.1029/2020WR027721
+
+Hatton, T.J., Salvucci, G.D., and Wu, H.I. (1997). Eagleson's Optimality Theory of an Ecohydrological Equilibrium: Quo Vadis? Functional Ecology, 11(6), 665–674. https://doi.org/10.1046/j.1365-2435.1997.00159.x
+
+Hunt, R.J. and Wilcox, D.A. (2003). Ecohydrology—Why Hydrologists Should Care. Ground Water, 41(3), 289–289. https://doi.org/10.1111/j.1745-6584.2003.tb02592.x
+
+Janauer, G.A. (2000). Ecohydrology: Fusing Concepts and Scales. Ecological Engineering, 16(1), 9–16. https://doi.org/10.1016/S0925-8574(00)00072-0
+
+Ji, Z.-G. (2008). Hydrodynamics and Water Quality: Modeling Rivers, Lakes, and Estuaries. Wiley-Interscience, Hoboken, NJ.
+
+Johnson, B.E. and Zhang, Z. (2016). Testing and Validation Studies of the NSMII-Benthic Sediment Diagenesis Module. ERDC/EL TR-16-11. U.S. Army Engineer Research and Development Center, Vicksburg, MS. https://hdl.handle.net/11681/20343
+
+Krysanova, V. and Arnold, J.G. (2008). Advances in Ecohydrological Modelling with SWAT—A Review. Hydrological Sciences Journal, 53(5), 939–947. https://doi.org/10.1623/hysj.53.5.939
+
+Kui, L., Stella, J.C., Lightbody, A., and Wilcox, A.C. (2014). Ecogeomorphic Feedbacks and Flood Loss of Riparian Tree Seedlings in Meandering Channel Experiments. Water Resources Research, 50(12), 9366–9384. https://doi.org/10.1002/2014WR015719
+
+Rodríguez-Iturbe, I. (2000). Ecohydrology: A Hydrologic Perspective of Climate-Soil-Vegetation Dynamics. Water Resources Research, 36(1), 3–9. https://doi.org/10.1029/1999WR900210
+
+Sullivan, C.J., Vokoun, J.C., Helton, A.M., Briggs, M.A., and Kurylyk, B.L. (2021). An Ecohydrological Typology for Thermal Refuges in Streams and Rivers. Ecohydrology, 14(5). https://doi.org/10.1002/eco.2295
+
+Sun, G., Hallema, D., and Asbjornsen, H. (2017). Ecohydrological Processes and Ecosystem Services in the Anthropocene: A Review. Ecological Processes, 6(1), 35. https://doi.org/10.1186/s13717-017-0104-6
+
+Thomann, R.V. and Mueller, J.A. (1987). Principles of Surface Water Quality Modeling and Control. Harper & Row, New York.
+
+Vannote, R.L., Minshall, G.W., Cummins, K.W., Sedell, J.R., and Cushing, C.E. (1980). The River Continuum Concept. Canadian Journal of Fisheries and Aquatic Sciences, 37(1), 130–137. https://doi.org/10.1139/f80-017
+
+Yin, X.A., Petts, G.E., and Yang, Z.F. (2015). Ecofriendly River Management under Ever-Increasing Environmental Pressures. River Research and Applications, 31(4), 403–405. https://doi.org/10.1002/rra.2902
+
+Zalewski, M., Janauer, G.A., and Jolánkai, G. (1997). Ecohydrology: A New Paradigm for the Sustainable Use of Aquatic Resources. UNESCO IHP Technical Document in Hydrology No. 7.
+
+Zhang, Z. and Johnson, B.E. (2016). Aquatic Contaminant and Mercury Simulation Modules Developed for Hydrologic and Hydraulic Models. ERDC/EL TR-16-8. U.S. Army Engineer Research and Development Center, Vicksburg, MS. https://hdl.handle.net/11681/20249
+
+Zhang, Z. and Johnson, B.E. (2016). Aquatic Nutrient Simulation Modules (NSMs) Developed for Hydrologic and Hydraulic Models. ERDC/EL TR-16-1. U.S. Army Engineer Research and Development Center, Vicksburg, MS. https://hdl.handle.net/11681/10112
 
 ## Contact
 
